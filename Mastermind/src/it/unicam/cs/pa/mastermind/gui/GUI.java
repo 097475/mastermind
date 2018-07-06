@@ -27,7 +27,7 @@ import javax.swing.border.LineBorder;
 
 import core.Code;
 import core.CodePeg;
-import core.Match;
+import core.InfoManager;
 import core.Outcome;
 import core.Settings;
 import core.Status;
@@ -110,7 +110,7 @@ public class GUI extends ObserverGUI implements Observer{
 		Code code = null;
 		String str = Arrays.stream(src).map(x->x.getActionCommand()+" ").reduce("", String::concat);
 		try {
-			code = Match.getMatch().parseCodeString(str);
+			code = InfoManager.getInfo().parseCodeString(str);
 		}catch(Exception ex){
 			super.getTextArea().append(ex.getMessage()+"\n");
 		}
@@ -118,7 +118,7 @@ public class GUI extends ObserverGUI implements Observer{
 		{
 			this.toggle(src);
 			this.send.setEnabled(false);
-			if(Match.getMatch().getStatus() == Status.AWAITINGCODE)
+			if(InfoManager.getInfo().getStatus() == Status.AWAITINGCODE)
 				this.player.receiveCode(code);
 			else
 				this.player.receiveGuess(code);
@@ -129,7 +129,7 @@ public class GUI extends ObserverGUI implements Observer{
 		Outcome response = null;
 		String str = Arrays.stream(src).map(x->x.getActionCommand()+" ").reduce("", String::concat);
 		try {
-			response = Match.getMatch().parseOutcomeString(str);
+			response = InfoManager.getInfo().parseOutcomeString(str);
 		}catch(Exception ex){
 			super.getTextArea().append(ex.getMessage()+"\n");
 		}
@@ -143,11 +143,11 @@ public class GUI extends ObserverGUI implements Observer{
 	
 	private void sendHandler(ActionEvent e)
 	{
-		switch(Match.getMatch().getStatus())
+		switch(InfoManager.getInfo().getStatus())
 		{
 			case AWAITINGCODE: this.executor.execute(()->getCode(super.getCodebtn()));  break;
-			case AWAITINGGUESS: this.executor.execute(()->getCode(super.getPegbtn()[Match.getMatch().getTurn()])); break;
-			case AWAITINGRESPONSE: this.executor.execute(()->getResponse(super.getKeybtn()[Match.getMatch().getTurn()]));  break;
+			case AWAITINGGUESS: this.executor.execute(()->getCode(super.getPegbtn()[InfoManager.getInfo().getTurn()])); break;
+			case AWAITINGRESPONSE: this.executor.execute(()->getResponse(super.getKeybtn()[InfoManager.getInfo().getTurn()]));  break;
 		}
 
 	}
@@ -290,12 +290,12 @@ public class GUI extends ObserverGUI implements Observer{
 		this.send.setEnabled(true);
 		if(this.codeBreaker) 
 		{
-			this.toggle(super.getPegbtn()[Match.getMatch().getTurn()]);		
+			this.toggle(super.getPegbtn()[InfoManager.getInfo().getTurn()]);		
 			super.getTextArea().setText("Insert your guess\n");
 		}			
 		else 
 		{
-			this.toggle(super.getKeybtn()[Match.getMatch().getTurn()]);
+			this.toggle(super.getKeybtn()[InfoManager.getInfo().getTurn()]);
 			super.getTextArea().setText("Insert the response\n");
 		}
 			

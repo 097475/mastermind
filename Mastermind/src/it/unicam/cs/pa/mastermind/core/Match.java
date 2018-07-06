@@ -57,7 +57,10 @@ public class Match{
 		match.initializePlayers();
 		match.runMatch();
 	}
-	
+	public static void startRemoteMatch()
+	{
+		match = new Match();
+	}
 	private void initializePlayers()
 	{
 		this.players = new Player[2];
@@ -141,18 +144,18 @@ public class Match{
 		{
 			throw new RuntimeException("Unlawful guess submitted!",ex);
 		}
-		this.currentBoard.setGuess(currentGuess);
+		this.currentBoard.setGuess(this.currentGuess);
 	}
 	private void getPlayerOutcome()
 	{
-		this.currentOutcome = players[currentRound%2].checkLastRow(currentBoard.getLastRow().getCode());
+		this.currentOutcome = players[currentRound%2].checkLastRow(this.currentGuess);
 		try{
-			this.verifyOutcome(currentOutcome);
+			this.verifyOutcome(this.currentOutcome);
 		}catch(Exception ex)
 		{
 			throw new RuntimeException("Unlawful response submitted!",ex);
 		}
-		this.currentBoard.setResponse(currentOutcome);
+		this.currentBoard.setResponse(this.currentOutcome);
 	}
 	private void finalizeRound()
 	{
@@ -193,7 +196,7 @@ public class Match{
 	public boolean verifyOutcome(Outcome o) throws IllegalArgumentException
 	{
 		if(o.getBlackPegs()+o.getWhitePegs()>this.codeSize) throw new IllegalArgumentException("Too many pegs");
-		if(!o.equals(Match.check(this.currentSecretCode, this.currentBoard.getLastRow().getCode()))) throw new IllegalArgumentException("Invalid response, expected :"+Match.check(currentSecretCode, this.currentBoard.getLastRow().getCode()).toString());
+		if(!o.equals(Match.check(this.currentSecretCode, this.currentGuess))) throw new IllegalArgumentException("Invalid response, expected :"+Match.check(currentSecretCode, this.currentBoard.getLastRow().getCode()).toString());
 		return true;
 	}
 	public Code parseCodeString(String str) throws NoSuchElementException,IllegalArgumentException

@@ -4,6 +4,8 @@ import java.util.Map;
 import java.util.function.BiFunction;
 
 import gui.GUI;
+import networking.RemotePlayer;
+import networking.Server;
 import players.GeneticPlayer;
 import players.HumanGUIPlayer;
 import players.HumanTextPlayer;
@@ -28,6 +30,8 @@ public class BasePlayerFactory implements PlayerFactory {
 			p = new HumanGUIPlayer(codeSize,pegSet,new GUI(codeBreaker,pegSet));
 		else if(type=="Human" && UI == "TextUI")
 			p = new HumanTextPlayer(codeSize,pegSet,System.in,System.out);
+		else if(type=="Remote")
+			p = new RemotePlayer(Server.getServer(),codeBreaker==true ? 1 : 0);
 		else
 			p =  AIPlayers.get(type).apply(codeSize, pegSet);
 		

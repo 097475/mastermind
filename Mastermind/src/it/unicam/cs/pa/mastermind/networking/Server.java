@@ -10,6 +10,7 @@ import core.Code;
 import core.GuessRow;
 import core.Match;
 import core.Outcome;
+import core.Settings;
 
 public class Server {
 	 ServerSocket providerSocket;
@@ -18,13 +19,15 @@ public class Server {
 	    ObjectInputStream in[];
 	    Message message;
 	    int connections = 0;
+	    private static Server istance;
 
-	public Server() {
+	private Server() {
 		try {
-			providerSocket = new ServerSocket(8080);
+			providerSocket = new ServerSocket(8096);
 			 connection = new Socket[2];
 			 out = new ObjectOutputStream[2];
 			 in = new ObjectInputStream[2];
+			 this.listen();
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -42,6 +45,7 @@ public class Server {
 			 out[connections] = new ObjectOutputStream(connection[connections].getOutputStream());
 	         out[connections].flush();
 	         in[connections] = new ObjectInputStream(connection[connections].getInputStream());
+	         this.sendMessage(new Message(MessageType.INFO,Settings.getGameProperties()), connections);
 	         System.out.println("Connection received from " + connection[connections].getInetAddress().getHostName());
 	         connections++;
 		}
@@ -58,7 +62,7 @@ public class Server {
         try{
             out[id].writeObject(msg);
             out[id].flush();
-            System.out.println("server>" + msg);
+            System.out.println("server>" + msg.getType());
         }
         catch(IOException ioException){
             ioException.printStackTrace();
@@ -68,7 +72,7 @@ public class Server {
 
 	public Code getCode(int id) {
 		// TODO Auto-generated method stub
-		sendMessage(new Message(MessageType.CODE,Match.getMatch().getStatus(),Match.getMatch().getTurn()),id);
+		sendMessage(new Message(MessageType.CODE,Match.getMatch().getStatus(),0),id);
 		return (Code)waitMessage(id).getArgument();
 	
 	}
@@ -98,6 +102,20 @@ public class Server {
 			e.printStackTrace();
 		}
          return message;
+	}
+	
+	public static void init()
+	{
+		istance = new Server();
+	}
+	public static Server getServer()
+	{
+		return istance;
+	}
+
+	public void endRound(int id) {
+		// TODO Auto-generated method stub
+		sendMessage(new Message(MessageType.ENDROUND,Match.getMatch().getP1Score(),Match.getMatch().getP2Score(),Match.getMatch().getRound()),id);
 	}
 	
 }

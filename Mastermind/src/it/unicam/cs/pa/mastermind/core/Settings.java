@@ -31,7 +31,7 @@ public class Settings {
 	private JComboBox<String> pegType,p1,p2;
 	private JRadioButton GUI,textUI,local,server,client;
 	private String[] types = {"Colors","Letters","Digits"};
-	private String[] opponents = {"Knuth","Random","Human","Genetic"};
+	private String[] opponents = {"Knuth","Random","Human","Genetic","Remote"};
 	private int res = JOptionPane.OK_OPTION;
 
 	private void setSlider(JSlider tmp, int spacing)
@@ -272,7 +272,7 @@ public class Settings {
 	{
 		if(instance==null)
 			instance = new Settings(p);
-		else throw new RuntimeException("Game Properties already been set!");
+			//throw new RuntimeException("Game Properties already been set!");
 	}
 
 }

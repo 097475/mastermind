@@ -5,29 +5,38 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.List;
+import java.util.Observable;
+import java.util.Properties;
 
 import core.Code;
 import core.GuessRow;
+import core.InfoManager;
+import core.Match;
 import core.Outcome;
 import core.Player;
+import core.Settings;
+import players.HumanGUIPlayer;
 
 
-public class HumanRemotePlayer implements Player{
+@SuppressWarnings("deprecation")
+public class HumanRemotePlayer extends Observable implements Player{
 
 	Player player;
 	Socket requestSocket;
     ObjectOutputStream out;
     ObjectInputStream in;
     Message message;
+    private Code secretCode;
 	public HumanRemotePlayer(Player player) {
 		this.player = player;
 		
 		try {
-			requestSocket = new Socket("localhost", 8080);
+			requestSocket = new Socket("localhost", 8096);
 			out = new ObjectOutputStream(requestSocket.getOutputStream());
             out.flush();
             in = new ObjectInputStream(requestSocket.getInputStream());
             System.out.println("Connected to localhost in port 8080");
+            this.addObserver(((HumanGUIPlayer) player).getGUI());
             this.run();
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -45,7 +54,7 @@ public class HumanRemotePlayer implements Player{
         try{
             out.writeObject(msg);
             out.flush();
-            System.out.println("client>" + msg);
+            System.out.println("client>" + msg.getType());
         }
         catch(IOException ioException){
             ioException.printStackTrace();
@@ -57,15 +66,22 @@ public class HumanRemotePlayer implements Player{
 		 do{
              try{
                  message = (Message)in.readObject();
-                // GUIMatch.setMatch(message.getStatus(),message.getTurn());
+                 InfoManager.getInfo().updateInfo(message);
+                 if(message.getArgument()!=null)
+                 {
+                	 this.setChanged();
+             		 this.notifyObservers(message.getArgument());
+                 }               
                  switch(message.getType())
                  {
-                 case CODE: sendMessage(new Message(MessageType.CODE,this.getCode())); break;
+                 case CODE: InfoManager.getInfo().setCode(this.getCode());
+                	 sendMessage(new Message(MessageType.CODE,this.secretCode)); break;
                  case GUESS: sendMessage(new Message(MessageType.GUESS,this.getGuess((List<GuessRow>)message.getArgument()))); break;
-                 case OUTCOME: sendMessage(new Message(MessageType.OUTCOME,this.checkLastRow((Code)message.getArgument()))); break;
+                 case OUTCOME: InfoManager.getInfo().setGuess((Code)message.getArgument());
+                	 sendMessage(new Message(MessageType.OUTCOME,this.checkLastRow((Code)message.getArgument()))); break;
                  case ENDROUND: this.endRound();break;
                  case ENDMATCH: this.endMatch();break;
-                 case INFO: break;//set the match
+                 case INFO: Settings.setGameProperties((Properties)message.getArgument()); Match.startRemoteMatch(); break;//set the match
                  default:break;
                  }
              }
@@ -87,7 +103,7 @@ public class HumanRemotePlayer implements Player{
 	@Override
 	public Code getCode() {
 		// TODO Auto-generated method stub
-		return player.getCode();
+		return secretCode = player.getCode();
 	}
 
 	@Override

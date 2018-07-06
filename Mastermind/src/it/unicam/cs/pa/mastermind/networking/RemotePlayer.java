@@ -37,7 +37,7 @@ public class RemotePlayer implements Player {
 	@Override
 	public void endRound() {
 		// TODO Auto-generated method stub
-
+		server.endRound(id);
 	}
 
 	@Override

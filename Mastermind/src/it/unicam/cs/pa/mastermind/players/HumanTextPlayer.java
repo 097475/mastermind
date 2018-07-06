@@ -10,6 +10,7 @@ import java.util.Map;
 import core.Code;
 import core.CodePeg;
 import core.GuessRow;
+import core.InfoManager;
 import core.Match;
 import core.Outcome;
 
@@ -41,7 +42,7 @@ public class HumanTextPlayer extends HumanPlayer{
 		this.out.println("Insert the guess (Available pegs: "+ pegSet.toString()+")");
 		try {
 			while(code == null)
-				code = Match.getMatch().parseCodeString(this.in.readLine());
+				code = InfoManager.getInfo().parseCodeString(this.in.readLine());
 		} catch (IOException e) {
 			out.println(e.getMessage());
 		}	
@@ -54,7 +55,7 @@ public class HumanTextPlayer extends HumanPlayer{
 		this.out.println("Insert the hidden code (Available pegs: "+ pegSet.toString()+")");
 		try {
 			while(code == null)
-				code = Match.getMatch().parseCodeString(this.in.readLine());
+				code = InfoManager.getInfo().parseCodeString(this.in.readLine());
 		} catch (IOException e) {
 			out.println(e.getMessage());
 		}
@@ -69,7 +70,7 @@ public class HumanTextPlayer extends HumanPlayer{
 		this.out.println("(Your secret code was: "+secretCode.toString()+")");
 		try {
 			while(o == null)
-				o = Match.getMatch().parseOutcomeString(this.in.readLine());
+				o = InfoManager.getInfo().parseOutcomeString(this.in.readLine());
 		} catch (IOException e) {
 			out.println(e.getMessage());
 		}	

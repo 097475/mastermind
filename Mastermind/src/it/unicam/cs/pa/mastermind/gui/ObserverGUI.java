@@ -30,7 +30,7 @@ import javax.swing.JTextArea;
 
 import core.Code;
 import core.CodePeg;
-import core.Match;
+import core.InfoManager;
 import core.Outcome;
 import core.ResourceLoader;
 import core.Settings;
@@ -187,7 +187,7 @@ public class ObserverGUI implements Observer{
 
 	private void updateGuess(Code guess)
 	{
-		int row = Match.getMatch().getTurn();
+		int row = InfoManager.getInfo().getTurn();
 		int j = 0;
 		for(CodePeg p : guess.get())
 		{
@@ -202,7 +202,7 @@ public class ObserverGUI implements Observer{
 
 	private void updateOutcome(Outcome o)
 	{
-		int row = Match.getMatch().getTurn();
+		int row = InfoManager.getInfo().getTurn();
 		int j=0;
 		for(int i = 0; i <o.getBlackPegs();i++)
 		{
@@ -258,8 +258,8 @@ public class ObserverGUI implements Observer{
 	}
 	public synchronized void endRound()
 	{
-		this.updateScores(Match.getMatch().getP1Score(),Match.getMatch().getP2Score());
-		this.textArea.setText("Round ended "+Match.getMatch().getRound()+". Press any key to continue...");
+		this.updateScores(InfoManager.getInfo().getP1Score(),InfoManager.getInfo().getP2Score());
+		this.textArea.setText("Round ended "+InfoManager.getInfo().getRound()+". Press any key to continue...");
 		this.toolkit.addAWTEventListener(this::keyPressed, AWTEvent.KEY_EVENT_MASK);
 		try {
 			this.wait();
