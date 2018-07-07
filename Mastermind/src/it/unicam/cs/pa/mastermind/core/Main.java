@@ -26,8 +26,8 @@ public class Main {
 		{
 		case "Local":	Match.init(); break;
 		case "Server": Server.init(); Match.init(); break;
-		case "Client": Map<String,CodePeg> pegSet =  new BasePegSetFactory(pegs.ColorPeg.class).getPegSet(6,false);
-			new HumanRemotePlayer(new HumanGUIPlayer(4, pegSet, new GUI(Boolean.parseBoolean(settings.getProperty("CodeBreaker")),pegSet))); break;
+		case "Client": 
+			new HumanRemotePlayer(); break;
 		
 		}
 
